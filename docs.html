@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NodeWorks Docs — model, API, demo activity</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0906;--panel:#171009;--panel2:#211709;--accent:#f97316;--accent2:#ea580c;--text:#fff4e8;--muted:#b39172;--line:rgba(255,244,232,.09);--line2:rgba(255,244,232,.2)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.55;min-height:100vh}
+a{color:var(--accent)}
+.wrap{max-width:900px;margin:0 auto;padding:0 24px}
+nav{border-bottom:1px solid var(--line);background:rgba(13,9,6,.9);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.logo i{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fdba74,var(--accent));display:inline-block}
+.nav-links{display:flex;align-items:center;gap:22px;font-size:13.5px;color:var(--muted)}
+.nav-links a.on{color:var(--accent)}
+.btn{font-family:inherit;font-weight:600;font-size:13.5px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer}
+.btn-a{background:var(--accent);color:#0d0906}
+select#netSel{background:var(--panel);border:1px solid var(--line2);border-radius:8px;font-family:inherit;font-size:12px;padding:9px;color:var(--text)}
+.toc{padding:18px 0;font-size:13px;color:var(--muted)}
+.toc a{margin-right:16px}
+h2{font-size:22px;margin:34px 0 12px;letter-spacing:-.01em}
+p{color:var(--muted);font-size:14.5px;margin-bottom:10px}
+.kv{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:18px 20px;display:grid;grid-template-columns:130px 1fr;gap:10px 18px;font-size:13.5px;margin:14px 0}
+.kv .k{color:var(--muted)}
+.kv .v{color:var(--text);overflow-wrap:anywhere}
+table{width:100%;border-collapse:collapse;margin:14px 0;font-size:13px}
+th{color:var(--muted);text-align:left;font-weight:600;letter-spacing:.06em;text-transform:uppercase;font-size:11px;padding:8px 10px;border-bottom:1px solid var(--line2)}
+td{padding:9px 10px;border-bottom:1px solid var(--line);vertical-align:top}
+.mono{font-family:ui-monospace,monospace}
+pre{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:16px 18px;font-size:12.5px;overflow-x:auto;margin:14px 0}
+footer{border-top:1px solid var(--line);padding:44px 0;color:var(--muted);font-size:13.5px;margin-top:50px}
+.proof{display:block;max-width:440px;margin-top:18px;padding:16px 18px;background:var(--panel);border:1px solid var(--line2);border-radius:8px}
+.proof-title{font-family:ui-monospace,'Courier New',monospace;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.proof-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-family:ui-monospace,'Courier New',monospace;font-size:12px;color:var(--muted)}
+.proof-grid .val{color:var(--accent);overflow-wrap:anywhere}
+.proof-links{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+.proof-link{font-family:ui-monospace,'Courier New',monospace;font-size:11px;color:var(--accent);border-bottom:1px solid var(--accent);text-decoration:none}
+</style>
+</head>
+<body>
+<nav><div class="wrap nav-in">
+<div class="logo"><i></i>NodeWorks</div>
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="app.html">App</a>
+<a href="docs.html" class="on">Docs</a>
+<select id="netSel"><option value="968">Testnet 968</option><option value="677" selected>Mainnet 677</option></select>
+<button class="btn btn-a" id="connectBtn">Connect wallet</button>
+</div>
+</div></nav>
+
+<div class="wrap">
+<div class="toc"><a href="#deploy">Deployment</a><a href="#model">Model</a><a href="#abi">Contract API</a><a href="#demo">Demo activity</a><a href="#build">Build & verify</a></div>
+
+<h2 id="deploy">Deployment</h2>
+<p>NodeWorks on BOT Chain mainnet (chain 677).</p>
+<div class="kv">
+<div class="k">Chain</div><div class="v">BOT Chain Mainnet · chainId 677 · RPC https://rpc.botchain.ai · explorer https://scan.botchain.ai</div>
+<div class="k">NodeWorks</div><div class="v"><a href="https://scan.botchain.ai/address/0x8Df96d6721196161a953b45da114a7BA8193E5B2" target="_blank" rel="noopener">0x8Df96d6721196161a953b45da114a7BA8193E5B2</a> · verified ✓</div>
+<div class="k">Reward token</div><div class="v">WBOT <a href="https://scan.botchain.ai/address/0xD5452816194a3784dBa983426cCe7c122F4abd30" target="_blank" rel="noopener">0xD5452816194a3784dBa983426cCe7c122F4abd30</a></div>
+<div class="k">Fee</div><div class="v">2.5% per settled job, to the treasury</div>
+<div class="k">Settlement</div><div class="v">poster approval · arbiter ruling · 3-day timeout self-settle</div>
+<div class="k">Compiler</div><div class="v">solc 0.8.30+commit.73712a01 · optimizer 200 runs · evmVersion cancun · flattened-code verification</div>
+</div>
+
+<h2 id="model">Model</h2>
+<p>NodeWorks is a bounty board for DePIN compute. A poster locks a WBOT reward against a job spec URI and a delivery deadline; the contract holds the funds, so a node never works on a promise. Any node claims the open job, starting the deadline clock, and submits a result URI with its proof of execution.</p>
+<p>Settlement is trust-minimized. The poster can approve the payout or dispute the result to the contract arbiter — but if the poster simply goes quiet, the worker self-settles through a three-day timeout and gets paid without anyone's permission. Every settled job bumps the worker's on-chain completedJobs counter, which other protocols (or agent policy engines like AgentVault) can read before routing work to a node.</p>
+
+<h2 id="abi">Contract API</h2>
+<table>
+<tr><th>Method</th><th>Signature</th><th>Notes</th></tr>
+<tr><td class="mono">postJob</td><td class="mono">(string specURI, uint256 reward, uint32 deadlineHours)</td><td>Locks reward; returns jobId</td></tr>
+<tr><td class="mono">claimJob</td><td class="mono">(uint256 jobId)</td><td>Node takes the job; clock starts</td></tr>
+<tr><td class="mono">submitJob</td><td class="mono">(uint256 jobId, string resultURI)</td><td>Worker only, before deadline</td></tr>
+<tr><td class="mono">approveJob</td><td class="mono">(uint256 jobId)</td><td>Poster only; pays worker minus 2.5%</td></tr>
+<tr><td class="mono">disputeJob</td><td class="mono">(uint256 jobId)</td><td>Poster only, within settlement window</td></tr>
+<tr><td class="mono">resolveDispute</td><td class="mono">(uint256 jobId, bool workerWins)</td><td>Arbiter only; pays or refunds</td></tr>
+<tr><td class="mono">timeoutSettle</td><td class="mono">(uint256 jobId)</td><td>Worker self-settles after 3 days of poster silence</td></tr>
+<tr><td class="mono">cancelJob</td><td class="mono">(uint256 jobId)</td><td>Poster refunds an unclaimed job</td></tr>
+<tr><td class="mono">getJob</td><td class="mono">(uint256) → struct fields</td><td>Full state read</td></tr>
+</table>
+<p>Events: <span class="mono">JobPosted, JobClaimed, JobSubmitted, JobApproved, JobDisputed, JobResolved, JobCancelled, JobTimedOut</span>.</p>
+
+<h2 id="demo">Demo activity</h2>
+<p>Nine mainnet demo transactions executed after deployment — all status ok, all methods decode by name on BOTScan. Two bounties posted, one settled by approval, one settled through the dispute path:</p>
+<table>
+<tr><th>#</th><th>Method</th><th>Actor</th><th>Description</th><th>Tx</th></tr>
+<tr><td>1</td><td class="mono">postJob</td><td>Wallet A</td><td>inference-batch-42 · 0.02 WBOT locked · 24h deadline</td><td class="mono"><a href="https://scan.botchain.ai/tx/0xfb2f33f0a40af152852c460d99f8a3c041825db84cc827fbe15d60a7b9dde7b8" target="_blank" rel="noopener">0xfb2f33f0…e7b8</a></td></tr>
+<tr><td>2</td><td class="mono">postJob</td><td>Wallet B</td><td>data-clean-7 · 0.01 WBOT locked · 48h deadline</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x0e0b3938d519019d5fd8d6f07873e9e168a8c7260d294710c3c0f8dc4a249359" target="_blank" rel="noopener">0x0e0b3938…9359</a></td></tr>
+<tr><td>3</td><td class="mono">claimJob</td><td>Wallet B</td><td>Node B claims job #0</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x0658499197f416a1a587bfaed3d5416548362964ceda603a45f876caa80fc26a" target="_blank" rel="noopener">0x06584991…c26a</a></td></tr>
+<tr><td>4</td><td class="mono">submitJob</td><td>Wallet B</td><td>Result URI delivered inside the deadline</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x4fe0961525b083d775b6a58f96b09b22fd9d0812be17483e445f7cc5444bc399" target="_blank" rel="noopener">0x4fe09615…c399</a></td></tr>
+<tr><td>5</td><td class="mono">approveJob</td><td>Wallet A</td><td>Poster approves — node B paid</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x15df40a388266d5f392a23cec22ce16681a8391f8c0214b55b62d6c07540ceb8" target="_blank" rel="noopener">0x15df40a3…ceb8</a></td></tr>
+<tr><td>6</td><td class="mono">claimJob</td><td>Wallet C</td><td>Node C claims job #1 — third wallet on the contract</td><td class="mono"><a href="https://scan.botchain.ai/tx/0xdb89a1df6bb898056804ba91305928afb21f787f3e83e7d5b249c2aae6e8f431" target="_blank" rel="noopener">0xdb89a1df…f431</a></td></tr>
+<tr><td>7</td><td class="mono">submitJob</td><td>Wallet C</td><td>Result URI delivered</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x5f29b0e9e05201f04ad8dd9c809ac56d01a3f9c9e93d3565643f36c9eff59c07" target="_blank" rel="noopener">0x5f29b0e9…9c07</a></td></tr>
+<tr><td>8</td><td class="mono">disputeJob</td><td>Wallet B</td><td>Poster disputes the result to the arbiter</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x1aaefd54e4a37778b4cef0c216c3864d4f68ad9ae1b606fec3d67c89462c74e1" target="_blank" rel="noopener">0x1aaefd54…74e1</a></td></tr>
+<tr><td>9</td><td class="mono">resolveDispute</td><td>deployer (arbiter)</td><td>Ruled for the worker — node C paid</td><td class="mono"><a href="https://scan.botchain.ai/tx/0x047cf5a85796d805183314a4c5a4d33b860bc7a795b6c8eb3a1dba599c1fd038" target="_blank" rel="noopener">0x047cf5a8…d038</a></td></tr>
+</table>
+<p>The contract carries 10 mainnet explorer transactions: 1 deploy + 9 demo across three wallets.</p>
+
+<h2 id="build">Build & verify</h2>
+<pre>cd botchain-builds/agent-vault
+node build2.mjs                    # solc 0.8.30 → artifacts/nodeworks/*.bin|.abi
+node deploy-2-mainnet.mjs          # deploy to chain 677 → deployed-mainnet-2.json
+node demo-2-mainnet.mjs            # post + claim + submit + approve + dispute lifecycle
+node make-flat-2.mjs               # SPDX-dedupe flatten + byte-match recompile
+node submit-verify-2-mainnet.mjs   # POST flattened-code → scan.botchain.ai</pre>
+<p>Flatten output lives in <code>agent-vault/verify2/*.flat.sol</code>. Each flat was recompiled and byte-matched against the deployed runtime before submission (<code>FLAT MATCH</code> ×2).</p>
+</div>
+
+<footer><div class="wrap">
+<p style="margin-bottom:2px">NodeWorks — DePIN compute bounties on BOT Chain. Live on mainnet; real assets with real value.</p>
+<div class="proof">
+<div class="proof-title">Proof on BOT Mainnet</div>
+<div class="proof-grid">
+<span>Chain ID</span><span class="val">677</span>
+<span>Contract</span><span class="val">0x8Df96d6721196161a953b45da114a7BA8193E5B2</span>
+</div>
+<div class="proof-links">
+<a href="https://botchain.ai" target="_blank" rel="noopener" class="proof-link">BOT Chain Website &#8599;</a>
+<a href="https://scan.botchain.ai/" target="_blank" rel="noopener" class="proof-link">BOTScan Explorer &#8599;</a>
+</div>
+</div>
+</div></footer>
+
+<script type="importmap">
+{"imports":{"ethers":"https://esm.sh/ethers@6.13.2","@reown/appkit":"https://esm.sh/@reown/appkit@1.8.21","@reown/appkit-adapter-ethers":"https://esm.sh/@reown/appkit-adapter-ethers@1.8.21"}}
+</script>
+<script type="module" src="app.js"></script>
+</body>
+</html>

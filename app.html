@@ -1,0 +1,128 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>NodeWorks App — post, claim, deliver, settle</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#0d0906;--panel:#171009;--panel2:#211709;--accent:#f97316;--accent2:#ea580c;--text:#fff4e8;--muted:#b39172;--line:rgba(255,244,232,.09);--line2:rgba(255,244,232,.2)}
+*{box-sizing:border-box;margin:0;padding:0}
+body{background:var(--bg);color:var(--text);font-family:'Space Grotesk',sans-serif;line-height:1.55;min-height:100vh}
+a{color:inherit;text-decoration:none}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+nav{border-bottom:1px solid var(--line);background:rgba(13,9,6,.9);backdrop-filter:blur(8px);position:sticky;top:0;z-index:50}
+.nav-in{display:flex;align-items:center;justify-content:space-between;height:60px}
+.logo{display:flex;align-items:center;gap:10px;font-weight:700;font-size:16px}
+.logo i{width:18px;height:18px;border-radius:50%;background:radial-gradient(circle at 30% 30%,#fdba74,var(--accent));display:inline-block}
+.nav-links{display:flex;align-items:center;gap:22px;font-size:13.5px;color:var(--muted)}
+.nav-links a:hover,.nav-links a.on{color:var(--accent)}
+.btn{font-family:'Space Grotesk',sans-serif;font-weight:600;font-size:13.5px;padding:10px 18px;border-radius:8px;border:none;cursor:pointer}
+.btn-a{background:var(--accent);color:#0d0906}
+.btn-g{background:transparent;color:var(--text);border:1px solid var(--line2)}
+select#netSel{background:var(--panel);border:1px solid var(--line2);border-radius:8px;font-family:'Space Grotesk',sans-serif;font-size:12px;padding:9px;color:var(--text)}
+.top{padding:34px 0 8px}
+.top h1{font-size:30px;font-weight:700;letter-spacing:-.02em}
+.badge{display:inline-block;font-size:11px;letter-spacing:.14em;text-transform:uppercase;color:var(--accent);border:1px solid rgba(249,115,22,.4);border-radius:99px;padding:6px 14px;margin-top:10px}
+.cells{display:grid;grid-template-columns:repeat(4,1fr);gap:14px;margin:24px 0}
+.cell{background:var(--panel);border:1px solid var(--line);border-radius:12px;padding:16px 18px}
+.cell .k{font-size:11px;letter-spacing:.12em;text-transform:uppercase;color:var(--muted)}
+.cell .v{font-size:20px;font-weight:700;color:var(--accent);margin-top:4px}
+.cols{display:grid;grid-template-columns:1fr 1fr;gap:18px;padding-bottom:60px}
+.panel{background:var(--panel);border:1px solid var(--line);border-radius:14px;padding:24px}
+.panel h2{font-size:17px;margin-bottom:14px}
+.panel .hint{font-size:12.5px;color:var(--muted);margin-top:8px}
+.row{display:grid;grid-template-columns:1fr auto;align-items:center;gap:10px;padding:10px 0;border-bottom:1px solid var(--line)}
+.row label{font-size:13px;color:var(--muted)}
+.row input{background:var(--panel2);border:1px solid var(--line2);border-radius:8px;padding:10px 12px;color:var(--text);font-family:inherit;font-size:13.5px;width:100%}
+.item{background:var(--panel2);border:1px solid var(--line);border-radius:10px;padding:12px 14px;margin-bottom:10px;font-size:13.5px}
+.item .mono{font-family:ui-monospace,monospace;font-size:12px;color:var(--muted);margin-top:4px}
+.item .tag{color:var(--accent);font-size:11.5px;letter-spacing:.06em;text-transform:uppercase}
+.empty{color:var(--muted);font-size:13px;padding:10px 0}
+.msg{color:var(--accent);font-size:12.5px;min-height:16px;margin-top:6px}
+.mono{font-family:ui-monospace,monospace}
+footer{border-top:1px solid var(--line);padding:44px 0;color:var(--muted);font-size:13.5px}
+.proof{display:block;max-width:440px;margin-top:18px;padding:16px 18px;background:var(--panel);border:1px solid var(--line2);border-radius:8px}
+.proof-title{font-family:ui-monospace,'Courier New',monospace;font-size:11px;font-weight:600;color:var(--accent);letter-spacing:.12em;text-transform:uppercase;margin-bottom:12px}
+.proof-grid{display:grid;grid-template-columns:auto 1fr;gap:6px 16px;font-family:ui-monospace,'Courier New',monospace;font-size:12px;color:var(--muted)}
+.proof-grid .val{color:var(--accent);overflow-wrap:anywhere}
+.proof-links{display:flex;gap:14px;flex-wrap:wrap;margin-top:12px}
+.proof-link{font-family:ui-monospace,'Courier New',monospace;font-size:11px;color:var(--accent);border-bottom:1px solid var(--accent);text-decoration:none}
+@media(max-width:900px){.cols{grid-template-columns:1fr}.cells{grid-template-columns:repeat(2,1fr)}}
+</style>
+</head>
+<body>
+<nav><div class="wrap nav-in">
+<div class="logo"><i></i>NodeWorks</div>
+<div class="nav-links">
+<a href="index.html">Home</a>
+<a href="app.html" class="on">App</a>
+<a href="docs.html">Docs</a>
+<select id="netSel"><option value="968">Testnet 968</option><option value="677" selected>Mainnet 677</option></select>
+<button class="btn btn-a" id="connectBtn">Connect wallet</button>
+</div>
+</div></nav>
+
+<div class="wrap top">
+<h1>Bounty board</h1>
+<span class="badge">Locked rewards · chain 677</span>
+<div class="cells">
+<div class="cell"><span class="k">Jobs posted</span><div class="v" id="stJobs">—</div></div>
+<div class="cell"><span class="k">Rewarded (WBOT)</span><div class="v" id="stRewarded">—</div></div>
+<div class="cell"><span class="k">Platform fee</span><div class="v">2.5%</div></div>
+<div class="cell"><span class="k">Settlement timeout</span><div class="v">3 days</div></div>
+</div>
+</div>
+
+<div class="wrap cols">
+<div class="panel">
+<h2>Post a job</h2>
+<div class="row"><label>Spec URI</label><input id="postSpec" placeholder="ipfs://job/inference-batch"></div>
+<div class="row"><label>Reward (WBOT)</label><input id="postReward" inputmode="decimal" placeholder="0.05"></div>
+<div class="row"><label>Deadline (hours)</label><input id="postHours" inputmode="numeric" placeholder="24"></div>
+<div class="row" style="border-bottom:none"><button class="btn btn-a" id="postBtn">Lock & post →</button><span class="msg" id="postMsg"></span></div>
+<p class="hint">The reward is transferred into the contract — refunds only if the job stays unclaimed and you cancel.</p>
+
+<h2 style="margin-top:26px">Job board</h2>
+<div id="jobList"><div class="empty">Loading…</div></div>
+
+<h2 style="margin-top:26px">Worker record</h2>
+<div class="row"><label>Worker address</label><input id="wkAddr" placeholder="0x…"></div>
+<div class="row" style="border-bottom:none"><button class="btn btn-g" id="wkBtn">Check record →</button></div>
+<div id="wkOut" style="margin-top:10px"></div>
+</div>
+
+<div class="panel">
+<h2>Act on a job</h2>
+<div class="row"><label>Job id</label><input id="actId" inputmode="numeric" placeholder="0"></div>
+<div class="row"><label>Result URI (submit)</label><input id="actResult" placeholder="ipfs://result/run-1"></div>
+<div class="row"><button class="btn btn-a" id="claimBtn">Claim →</button><button class="btn btn-a" id="subBtn">Submit →</button></div>
+<div class="row"><button class="btn btn-g" id="appBtn">Approve →</button><button class="btn btn-g" id="disBtn">Dispute →</button></div>
+<span class="msg" id="actMsg"></span>
+<p class="hint">Claim as a node, submit your result before the deadline, then the poster approves — or the 3-day timeout settles to you automatically. Posters can dispute a submission to the arbiter within the window.</p>
+</div>
+</div>
+
+<footer><div class="wrap">
+<p style="margin-bottom:2px">NodeWorks — DePIN compute bounties on BOT Chain. Live on mainnet; real assets with real value.</p>
+<div class="proof">
+<div class="proof-title">Proof on BOT Mainnet</div>
+<div class="proof-grid">
+<span>Chain ID</span><span class="val">677</span>
+<span>Contract</span><span class="val">0x8Df96d6721196161a953b45da114a7BA8193E5B2</span>
+</div>
+<div class="proof-links">
+<a href="https://botchain.ai" target="_blank" rel="noopener" class="proof-link">BOT Chain Website &#8599;</a>
+<a href="https://scan.botchain.ai/" target="_blank" rel="noopener" class="proof-link">BOTScan Explorer &#8599;</a>
+</div>
+</div>
+</div></footer>
+
+<script type="importmap">
+{"imports":{"ethers":"https://esm.sh/ethers@6.13.2","@reown/appkit":"https://esm.sh/@reown/appkit@1.8.21","@reown/appkit-adapter-ethers":"https://esm.sh/@reown/appkit-adapter-ethers@1.8.21"}}
+</script>
+<script type="module" src="app.js"></script>
+</body>
+</html>
