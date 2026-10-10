@@ -37,6 +37,7 @@ const NW_ABI = [
 const ERC20_ABI = [
   'function balanceOf(address) view returns (uint256)',
   'function approve(address,uint256) returns (bool)',
+  'function deposit() payable',
   'function allowance(address,address) view returns (uint256)',
 ];
 
@@ -155,12 +156,34 @@ async function doAction(method, args, msgId, needsValue) {
   const s = await signerOrAlert();
   if (!s) return;
   const c = CONTRACTS[currentChainId];
+  if (needsValue && !(await ensureWbot(needsValue, 'actMsg'))) return;
   if (needsValue && !(await ensureAllowance(c.nw, needsValue))) return;
   const nw = new ethers.Contract(c.nw, NW_ABI, s);
   const tx = await nw[method](...args, { gasPrice: ethers.parseUnits('20', 'gwei'), gasLimit: 600000n });
   await tx.wait();
   showMsg(msgId, 'done');
   refresh();
+}
+
+async function ensureWbot(amount, msgId) {
+  const s = await signerOrAlert();
+  if (!s) return false;
+  const c = CONTRACTS[currentChainId];
+  const w = new ethers.Contract(c.wbot, ERC20_ABI, s);
+  const owner = await s.getAddress();
+  const bal = await w.balanceOf(owner);
+  if (bal >= amount) return true;
+  const shortfall = amount - bal;
+  const native = await s.provider.getBalance(owner);
+  const gasCost = ethers.parseUnits('0.005', 18);
+  if (native < shortfall + gasCost) {
+    showMsg(msgId, 'Need ' + fmt(shortfall + gasCost - native) + ' more BOT — fund the wallet first (wrap + gas).');
+    return false;
+  }
+  showMsg(msgId, 'Wrapping BOT → WBOT…');
+  const tx = await w.deposit({ value: shortfall });
+  await tx.wait();
+  return true;
 }
 
 function showMsg(id, msg) {
