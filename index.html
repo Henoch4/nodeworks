@@ -33,9 +33,9 @@ select#netSel{background:var(--card);border:1px solid var(--line);padding:9px 12
 </style></head><body>
 <nav><a class="lg" href="index.html"><i></i>NodeWorks</a><span style="display:flex;gap:18px;align-items:center"><a href="index.html" style="font-size:13px">Home</a><a href="app.html" style="font-size:13px">App</a><a href="docs.html" style="font-size:13px">Docs</a><select id="netSel"><option value="968">Testnet 968</option><option value="677" selected>Mainnet 677</option></select><button class="cw" id="themeBtn" title="Theme">☀</button><button class="cw" id="connectBtn">Connect wallet</button></span></nav>
 <header class="hero"><canvas id="nw"></canvas><div class="hi"><h1>Post compute jobs. Nodes deliver. <em>Settle on-chain.</em></h1><p>Lock a reward, let any node deliver the result, and get paid by approval, ruling or a 3-day timer if the poster goes quiet.</p></div>
-<div class="sg"><div><b id="k1">0</b><span>Jobs posted</span></div><div><b id="k2">0</b><span>Rewarded (WBOT)</span></div><div><b>2.5%</b><span>Platform fee</span></div><div><b>3 days</b><span>Settlement timeout</span></div></div></header>
+<div class="sg"><div><b id="k1">0</b><span>Jobs posted</span></div><div><b id="k2">0</b><span>Rewarded (<span id="rwdsym">WBOT</span>)</span></div><div><b>2.5%</b><span>Platform fee</span></div><div><b>3 days</b><span>Settlement timeout</span></div></div></header>
 <div class="bd" id="board"><div><div class="pipe" id="pp"><div>Post</div><div>Claim</div><div>Submit</div><div>Approve</div><div>Settle</div></div><div class="jb" id="jb"></div></div>
-<div class="pj"><h3>Post a job</h3><label>Job title<input id="jt" placeholder="Run LLM inference batch"></label><label>Reward (WBOT)<input id="jv" value="0.05" inputmode="decimal"></label><button class="go" id="jg">Lock reward and post</button><p>The reward is locked in the contract the moment you post. If the poster goes quiet after delivery, the 3-day timer pays the worker.</p></div></div>
+<div class="pj"><h3>Post a job</h3><label>Job title<input id="jt" placeholder="Run LLM inference batch"></label><label>Reward (<span id="rewsym">WBOT</span>)<input id="jv" value="0.05" inputmode="decimal"></label><button class="go" id="jg">Lock reward and post</button><p>The reward is locked in the contract the moment you post. If the poster goes quiet after delivery, the 3-day timer pays the worker.</p></div></div>
 <section class="tr"><h2>Three ways a job gets paid</h2><div class="tg"><div><h3>Poster approves</h3><p>The poster signs off and the worker is paid, minus the 2.5% platform fee.</p></div><div><h3>Arbiter rules</h3><p>A disputed result goes to the arbiter, who decides the payout.</p></div><div><h3>Timer pays out</h3><p>If the poster goes quiet, the 3-day timeout pays the worker automatically.</p></div></div></section>
 <footer><div class="wrap">
 <p style="margin-bottom:2px">NodeWorks — DePIN compute bounties on BOT Chain. Live on mainnet; real bounties with real settlement.</p>
@@ -90,8 +90,8 @@ const NETS = {
   677: { id: 677, name: 'BOT Chain', nativeCurrency: { name: 'BOT', symbol: 'BOT', decimals: 18 }, rpcUrls: { default: { http: ['https://rpc.botchain.ai'] } }, blockExplorers: { default: { name: 'BOTScan', url: 'https://scan.botchain.ai' } } },
 };
 const CHAINS = {
-  968: { nw: '0x13C675A6400CB17C7a3cEED03B7985adb2a4984B', wbot: '0xD8FBaBf44B2dbb427d881F8Ea66F14D8287A55c0' },
-  677: { nw: '0x8Df96d6721196161a953b45da114a7BA8193E5B2', wbot: '0xD5452816194a3784dBa983426cCe7c122F4abd30' },
+  968: { nw: '0x13C675A6400CB17C7a3cEED03B7985adb2a4984B', wbot: '0xD8FBaBf44B2dbb427d881F8Ea66F14D8287A55c0', sym: 'TestWBOT' },
+  677: { nw: '0x8Df96d6721196161a953b45da114a7BA8193E5B2', wbot: '0xD5452816194a3784dBa983426cCe7c122F4abd30', sym: 'WBOT' },
 };
 const NW_ABI = [
   'function totalJobs() view returns (uint256)',
@@ -116,6 +116,7 @@ let account = null;
 let appkit = null;
 let jobs = [];
 let sel = 0;
+let curSym = 'WBOT';
 
 function rpc() { return new ethers.JsonRpcProvider(currentChainId === 677 ? 'https://rpc.botchain.ai' : 'https://rpc.bohr.life'); }
 const short = (a) => (a ? a.slice(0, 6) + '…' + a.slice(-4) : '—');
@@ -143,12 +144,16 @@ function initAppKit() {
 async function refresh() {
   try {
     const c = CHAINS[currentChainId];
+    curSym = c.sym;
     const p = rpc();
     const nw = new ethers.Contract(c.nw, NW_ABI, p);
     const [total, rewarded] = await Promise.all([nw.totalJobs(), nw.totalRewarded()]);
     const k1 = $("#k1"), k2 = $("#k2");
     if (k1) k1.textContent = fmt(Number(total));
     if (k2) k2.textContent = fmt(Number(ethers.formatEther(rewarded)), 4);
+    const rws = $("#rwdsym"), rfs = $("#rewsym");
+    if (rws) rws.textContent = c.sym;
+    if (rfs) rfs.textContent = c.sym;
     jobs = [];
     const list = [];
     for (let i = 0; i < Number(total); i++) {
@@ -167,7 +172,7 @@ function jobSub(j) {
   if (j.state === 0) return "Reward locked in contract";
   if (j.state === 1) return "Deadline clock running";
   if (j.state === 2) return "Submitted — awaiting poster";
-  if (j.state === 3) return "Worker paid " + fmt(Number(ethers.formatEther(j.reward)) * .975, 4) + " WBOT (−2.5%)";
+  if (j.state === 3) return "Worker paid " + fmt(Number(ethers.formatEther(j.reward)) * .975, 4) + " " + curSym + " (−2.5%)";
   if (j.state === 4) return "Cancelled — refunded";
   return "Disputed — arbiter decides";
 }
