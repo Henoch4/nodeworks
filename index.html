@@ -120,6 +120,22 @@ let curSym = 'WBOT';
 
 function rpc() { return new ethers.JsonRpcProvider(currentChainId === 677 ? 'https://rpc.botchain.ai' : 'https://rpc.bohr.life'); }
 const short = (a) => (a ? a.slice(0, 6) + '…' + a.slice(-4) : '—');
+
+function getProvider() {
+  try {
+    if (typeof appkit !== 'undefined' && appkit && typeof appkit.getWalletProvider === 'function') {
+      const p = appkit.getWalletProvider('eip155') || appkit.getWalletProvider();
+      if (p) return p;
+    }
+  } catch (e) {}
+  return null;
+}
+async function getSigner() {
+  const wp = getProvider();
+  if (!wp) { try { appkit.open(); } catch (e) {} return null; }
+  return new ethers.BrowserProvider(wp).getSigner();
+}
+
 const esc = (s) => { const d = document.createElement('div'); d.textContent = s; return d.innerHTML; };
 const dur = (s) => Math.floor(s / 86400) + "d " + Math.floor((s % 86400) / 3600) + "h " + Math.floor((s % 3600) / 60) + "m";
 
@@ -211,7 +227,7 @@ if ($("#jb")) $("#jb").addEventListener("click", async (e) => {
   const a = b.dataset.a;
   try {
     const c = CHAINS[currentChainId];
-    const s = await appkit.getSigner();
+    const s = await getSigner(); if (!s) return;;
     const nw = new ethers.Contract(c.nw, NW_ABI, s);
     if (a === "claim") {
       toast("Claiming job…");
@@ -244,7 +260,7 @@ if (jg) jg.addEventListener("click", async () => {
   if (!account) { appkit.open(); return; }
   try {
     const c = CHAINS[currentChainId];
-    const s = await appkit.getSigner();
+    const s = await getSigner(); if (!s) return;;
     const me = await s.getAddress();
     const amt = ethers.parseEther(String(v));
     const t = new ethers.Contract(c.wbot, ERC20_ABI, s);
