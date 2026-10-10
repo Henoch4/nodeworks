@@ -142,7 +142,7 @@ const dur = (s) => Math.floor(s / 86400) + "d " + Math.floor((s % 86400) / 3600)
 function initAppKit() {
   const adapter = new EthersAdapter();
   appkit = new AppKit({
-    networks: [NETS[968], NETS[677]], adapters: [adapter], projectId: PROJECT_ID, themeMode: 'dark',
+    networks: [NETS[677], NETS[968]], adapters: [adapter], projectId: PROJECT_ID, themeMode: 'dark',
     metadata: { name: 'NodeWorks', description: 'DePIN compute bounties on BOT Chain', url: location.origin, icons: [] },
   });
   appkit.subscribeAccount((s) => {
